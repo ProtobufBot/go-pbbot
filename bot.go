@@ -13,7 +13,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var Bots map[int64]*Bot
+var Bots = make(map[int64]*Bot)
 
 type Bot struct {
 	BotId         int64
@@ -68,6 +68,7 @@ func NewBot(botId int64, conn *websocket.Conn) *Bot {
 		}
 		_ = p.Reject(errors.New("cleaned by lru"))
 	}
+	Bots[botId] = bot
 	HandleConnect(bot)
 	return bot
 }
