@@ -45,6 +45,7 @@ func NewSafeWebSocket(conn *websocket.Conn, OnRecvMessage func(messageType int, 
 			messageType, data, err := conn.ReadMessage()
 			if err != nil {
 				log.Errorf("failed to read message, err: %+v", err)
+				_ = conn.Close()
 				return
 			}
 			if messageType == websocket.PingMessage {
@@ -64,7 +65,9 @@ func NewSafeWebSocket(conn *websocket.Conn, OnRecvMessage func(messageType int, 
 			}
 			err := ws.Conn.WriteMessage(sendingMessage.MessageType, sendingMessage.Data)
 			if err != nil {
-
+				log.Errorf("failed to send websocket message, %+v", err)
+				_ = conn.Close()
+				return
 			}
 		}
 	})
