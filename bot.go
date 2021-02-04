@@ -165,8 +165,8 @@ func (bot *Bot) sendFrameAndWait(frame *onebot.Frame) (*onebot.Frame, error) {
 	return respFrame, nil
 }
 
-func (bot *Bot) SendPrivateMessage(userId int64, msg *Msg, autoEscape bool) *onebot.SendPrivateMsgResp {
-	resp, err := bot.sendFrameAndWait(&onebot.Frame{
+func (bot *Bot) SendPrivateMessage(userId int64, msg *Msg, autoEscape bool) (*onebot.SendPrivateMsgResp, error) {
+	if resp, err := bot.sendFrameAndWait(&onebot.Frame{
 		FrameType: onebot.Frame_TSendPrivateMsgReq,
 		Data: &onebot.Frame_SendPrivateMsgReq{
 			SendPrivateMsgReq: &onebot.SendPrivateMsgReq{
@@ -175,15 +175,15 @@ func (bot *Bot) SendPrivateMessage(userId int64, msg *Msg, autoEscape bool) *one
 				AutoEscape: autoEscape,
 			},
 		},
-	})
-	if err != nil {
-		return nil
+	}); err != nil {
+		return nil, err
+	} else {
+		return resp.GetSendPrivateMsgResp(), nil
 	}
-	return resp.GetSendPrivateMsgResp()
 }
 
-func (bot *Bot) SendGroupMessage(groupId int64, msg *Msg, autoEscape bool) *onebot.SendGroupMsgResp {
-	resp, err := bot.sendFrameAndWait(&onebot.Frame{
+func (bot *Bot) SendGroupMessage(groupId int64, msg *Msg, autoEscape bool) (*onebot.SendGroupMsgResp, error) {
+	if resp, err := bot.sendFrameAndWait(&onebot.Frame{
 		FrameType: onebot.Frame_TSendGroupMsgReq,
 		Data: &onebot.Frame_SendGroupMsgReq{
 			SendGroupMsgReq: &onebot.SendGroupMsgReq{
@@ -192,45 +192,45 @@ func (bot *Bot) SendGroupMessage(groupId int64, msg *Msg, autoEscape bool) *oneb
 				AutoEscape: autoEscape,
 			},
 		},
-	})
-	if err != nil {
-		return nil
+	}); err != nil {
+		return nil, err
+	} else {
+		return resp.GetSendGroupMsgResp(), nil
 	}
-	return resp.GetSendGroupMsgResp()
 }
 
-func (bot *Bot) DeleteMsg(messageId int32) *onebot.DeleteMsgResp {
-	resp, err := bot.sendFrameAndWait(&onebot.Frame{
+func (bot *Bot) DeleteMsg(messageId int32) (*onebot.DeleteMsgResp, error) {
+	if resp, err := bot.sendFrameAndWait(&onebot.Frame{
 		FrameType: onebot.Frame_TDeleteMsgReq,
 		Data: &onebot.Frame_DeleteMsgReq{
 			DeleteMsgReq: &onebot.DeleteMsgReq{
 				MessageId: messageId,
 			},
 		},
-	})
-	if err != nil {
-		return nil
+	}); err != nil {
+		return nil, err
+	} else {
+		return resp.GetDeleteMsgResp(), nil
 	}
-	return resp.GetDeleteMsgResp()
 }
 
-func (bot *Bot) GetMsg(messageId int32) *onebot.GetMsgResp {
-	resp, err := bot.sendFrameAndWait(&onebot.Frame{
+func (bot *Bot) GetMsg(messageId int32) (*onebot.GetMsgResp, error) {
+	if resp, err := bot.sendFrameAndWait(&onebot.Frame{
 		FrameType: onebot.Frame_TGetMsgReq,
 		Data: &onebot.Frame_GetMsgReq{
 			GetMsgReq: &onebot.GetMsgReq{
 				MessageId: messageId,
 			},
 		},
-	})
-	if err != nil {
-		return nil
+	}); err != nil {
+		return nil, err
+	} else {
+		return resp.GetGetMsgResp(), nil
 	}
-	return resp.GetGetMsgResp()
 }
 
-func (bot *Bot) SetGroupKick(groupId int64, userId int64, rejectAddRequest bool) *onebot.SetGroupKickResp {
-	resp, err := bot.sendFrameAndWait(&onebot.Frame{
+func (bot *Bot) SetGroupKick(groupId int64, userId int64, rejectAddRequest bool) (*onebot.SetGroupKickResp, error) {
+	if resp, err := bot.sendFrameAndWait(&onebot.Frame{
 		FrameType: onebot.Frame_TSetGroupKickReq,
 		Data: &onebot.Frame_SetGroupKickReq{
 			SetGroupKickReq: &onebot.SetGroupKickReq{
@@ -239,15 +239,15 @@ func (bot *Bot) SetGroupKick(groupId int64, userId int64, rejectAddRequest bool)
 				RejectAddRequest: rejectAddRequest,
 			},
 		},
-	})
-	if err != nil {
-		return nil
+	}); err != nil {
+		return nil, err
+	} else {
+		return resp.GetSetGroupKickResp(), nil
 	}
-	return resp.GetSetGroupKickResp()
 }
 
-func (bot *Bot) SetGroupBan(groupId int64, userId int64, duration int32) *onebot.SetGroupBanResp {
-	resp, err := bot.sendFrameAndWait(&onebot.Frame{
+func (bot *Bot) SetGroupBan(groupId int64, userId int64, duration int32) (*onebot.SetGroupBanResp, error) {
+	if resp, err := bot.sendFrameAndWait(&onebot.Frame{
 		FrameType: onebot.Frame_TSetGroupBanReq,
 		Data: &onebot.Frame_SetGroupBanReq{
 			SetGroupBanReq: &onebot.SetGroupBanReq{
@@ -256,15 +256,15 @@ func (bot *Bot) SetGroupBan(groupId int64, userId int64, duration int32) *onebot
 				Duration: duration,
 			},
 		},
-	})
-	if err != nil {
-		return nil
+	}); err != nil {
+		return nil, err
+	} else {
+		return resp.GetSetGroupBanResp(), nil
 	}
-	return resp.GetSetGroupBanResp()
 }
 
-func (bot *Bot) SetGroupWholeBan(groupId int64, enable bool) *onebot.SetGroupWholeBanResp {
-	resp, err := bot.sendFrameAndWait(&onebot.Frame{
+func (bot *Bot) SetGroupWholeBan(groupId int64, enable bool) (*onebot.SetGroupWholeBanResp, error) {
+	if resp, err := bot.sendFrameAndWait(&onebot.Frame{
 		FrameType: onebot.Frame_TSetGroupWholeBanReq,
 		Data: &onebot.Frame_SetGroupWholeBanReq{
 			SetGroupWholeBanReq: &onebot.SetGroupWholeBanReq{
@@ -272,15 +272,15 @@ func (bot *Bot) SetGroupWholeBan(groupId int64, enable bool) *onebot.SetGroupWho
 				Enable:  enable,
 			},
 		},
-	})
-	if err != nil {
-		return nil
+	}); err != nil {
+		return nil, err
+	} else {
+		return resp.GetSetGroupWholeBanResp(), nil
 	}
-	return resp.GetSetGroupWholeBanResp()
 }
 
-func (bot *Bot) SetGroupCard(groupId int64, userId int64, card string) *onebot.SetGroupCardResp {
-	resp, err := bot.sendFrameAndWait(&onebot.Frame{
+func (bot *Bot) SetGroupCard(groupId int64, userId int64, card string) (*onebot.SetGroupCardResp, error) {
+	if resp, err := bot.sendFrameAndWait(&onebot.Frame{
 		FrameType: onebot.Frame_TSetGroupCardReq,
 		Data: &onebot.Frame_SetGroupCardReq{
 			SetGroupCardReq: &onebot.SetGroupCardReq{
@@ -289,15 +289,15 @@ func (bot *Bot) SetGroupCard(groupId int64, userId int64, card string) *onebot.S
 				Card:    card,
 			},
 		},
-	})
-	if err != nil {
-		return nil
+	}); err != nil {
+		return nil, err
+	} else {
+		return resp.GetSetGroupCardResp(), nil
 	}
-	return resp.GetSetGroupCardResp()
 }
 
-func (bot *Bot) SetGroupLeave(groupId int64, isDismiss bool) *onebot.SetGroupLeaveResp {
-	resp, err := bot.sendFrameAndWait(&onebot.Frame{
+func (bot *Bot) SetGroupLeave(groupId int64, isDismiss bool) (*onebot.SetGroupLeaveResp, error) {
+	if resp, err := bot.sendFrameAndWait(&onebot.Frame{
 		FrameType: onebot.Frame_TSetGroupLeaveReq,
 		Data: &onebot.Frame_SetGroupLeaveReq{
 			SetGroupLeaveReq: &onebot.SetGroupLeaveReq{
@@ -305,15 +305,15 @@ func (bot *Bot) SetGroupLeave(groupId int64, isDismiss bool) *onebot.SetGroupLea
 				IsDismiss: isDismiss,
 			},
 		},
-	})
-	if err != nil {
-		return nil
+	}); err != nil {
+		return nil, err
+	} else {
+		return resp.GetSetGroupLeaveResp(), nil
 	}
-	return resp.GetSetGroupLeaveResp()
 }
 
-func (bot *Bot) SetGroupSpecialTitle(groupId int64, userId int64, specialTitle string, duration int64) *onebot.SetGroupSpecialTitleResp {
-	resp, err := bot.sendFrameAndWait(&onebot.Frame{
+func (bot *Bot) SetGroupSpecialTitle(groupId int64, userId int64, specialTitle string, duration int64) (*onebot.SetGroupSpecialTitleResp, error) {
+	if resp, err := bot.sendFrameAndWait(&onebot.Frame{
 		FrameType: onebot.Frame_TSetGroupSpecialTitleReq,
 		Data: &onebot.Frame_SetGroupSpecialTitleReq{
 			SetGroupSpecialTitleReq: &onebot.SetGroupSpecialTitleReq{
@@ -323,15 +323,15 @@ func (bot *Bot) SetGroupSpecialTitle(groupId int64, userId int64, specialTitle s
 				Duration:     duration,
 			},
 		},
-	})
-	if err != nil {
-		return nil
+	}); err != nil {
+		return nil, err
+	} else {
+		return resp.GetSetGroupSpecialTitleResp(), nil
 	}
-	return resp.GetSetGroupSpecialTitleResp()
 }
 
-func (bot *Bot) SetFriendAddRequest(flag string, approve bool, remark string) *onebot.SetFriendAddRequestResp {
-	resp, err := bot.sendFrameAndWait(&onebot.Frame{
+func (bot *Bot) SetFriendAddRequest(flag string, approve bool, remark string) (*onebot.SetFriendAddRequestResp, error) {
+	if resp, err := bot.sendFrameAndWait(&onebot.Frame{
 		FrameType: onebot.Frame_TSetFriendAddRequestReq,
 		Data: &onebot.Frame_SetFriendAddRequestReq{
 			SetFriendAddRequestReq: &onebot.SetFriendAddRequestReq{
@@ -340,14 +340,15 @@ func (bot *Bot) SetFriendAddRequest(flag string, approve bool, remark string) *o
 				Remark:  remark,
 			},
 		},
-	})
-	if err != nil {
-		return nil
+	}); err != nil {
+		return nil, err
+	} else {
+		return resp.GetSetFriendAddRequestResp(), nil
 	}
-	return resp.GetSetFriendAddRequestResp()
 }
-func (bot *Bot) SetGroupAddRequest(flag string, approve bool, reason string) *onebot.SetGroupAddRequestResp {
-	resp, err := bot.sendFrameAndWait(&onebot.Frame{
+
+func (bot *Bot) SetGroupAddRequest(flag string, approve bool, reason string) (*onebot.SetGroupAddRequestResp, error) {
+	if resp, err := bot.sendFrameAndWait(&onebot.Frame{
 		FrameType: onebot.Frame_TSetGroupAddRequestReq,
 		Data: &onebot.Frame_SetGroupAddRequestReq{
 			SetGroupAddRequestReq: &onebot.SetGroupAddRequestReq{
@@ -356,11 +357,11 @@ func (bot *Bot) SetGroupAddRequest(flag string, approve bool, reason string) *on
 				Reason:  reason,
 			},
 		},
-	})
-	if err != nil {
-		return nil
+	}); err != nil {
+		return nil, err
+	} else {
+		return resp.GetSetGroupAddRequestResp(), nil
 	}
-	return resp.GetSetGroupAddRequestResp()
 }
 
 // TODO 剩余API
