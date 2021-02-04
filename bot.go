@@ -199,4 +199,84 @@ func (bot *Bot) SendGroupMessage(groupId int64, msg *Msg, autoEscape bool) *oneb
 	return resp.GetSendGroupMsgResp()
 }
 
+func (bot *Bot) DeleteMsg(messageId int32) *onebot.DeleteMsgResp {
+	resp, err := bot.sendFrameAndWait(&onebot.Frame{
+		FrameType: onebot.Frame_TDeleteMsgReq,
+		Data: &onebot.Frame_DeleteMsgReq{
+			DeleteMsgReq: &onebot.DeleteMsgReq{
+				MessageId: messageId,
+			},
+		},
+	})
+	if err != nil {
+		return nil
+	}
+	return resp.GetDeleteMsgResp()
+}
+
+func (bot *Bot) GetMsg(messageId int32) *onebot.GetMsgResp {
+	resp, err := bot.sendFrameAndWait(&onebot.Frame{
+		FrameType: onebot.Frame_TGetMsgReq,
+		Data: &onebot.Frame_GetMsgReq{
+			GetMsgReq: &onebot.GetMsgReq{
+				MessageId: messageId,
+			},
+		},
+	})
+	if err != nil {
+		return nil
+	}
+	return resp.GetGetMsgResp()
+}
+
+func (bot *Bot) SetGroupKick(groupId int64, userId int64, rejectAddRequest bool) *onebot.SetGroupKickResp {
+	resp, err := bot.sendFrameAndWait(&onebot.Frame{
+		FrameType: onebot.Frame_TSetGroupKickReq,
+		Data: &onebot.Frame_SetGroupKickReq{
+			SetGroupKickReq: &onebot.SetGroupKickReq{
+				GroupId:          groupId,
+				UserId:           userId,
+				RejectAddRequest: rejectAddRequest,
+			},
+		},
+	})
+	if err != nil {
+		return nil
+	}
+	return resp.GetSetGroupKickResp()
+}
+
+func (bot *Bot) SetGroupBan(groupId int64, userId int64, duration int32) *onebot.SetGroupBanResp {
+	resp, err := bot.sendFrameAndWait(&onebot.Frame{
+		FrameType: onebot.Frame_TSetGroupBanReq,
+		Data: &onebot.Frame_SetGroupBanReq{
+			SetGroupBanReq: &onebot.SetGroupBanReq{
+				GroupId:  groupId,
+				UserId:   userId,
+				Duration: duration,
+			},
+		},
+	})
+	if err != nil {
+		return nil
+	}
+	return resp.GetSetGroupBanResp()
+}
+
+func (bot *Bot) SetGroupWholeBan(groupId int64, enable bool) *onebot.SetGroupWholeBanResp {
+	resp, err := bot.sendFrameAndWait(&onebot.Frame{
+		FrameType: onebot.Frame_TSetGroupWholeBanReq,
+		Data: &onebot.Frame_SetGroupWholeBanReq{
+			SetGroupWholeBanReq: &onebot.SetGroupWholeBanReq{
+				GroupId: groupId,
+				Enable:  enable,
+			},
+		},
+	})
+	if err != nil {
+		return nil
+	}
+	return resp.GetSetGroupWholeBanResp()
+}
+
 // TODO 剩余API
