@@ -82,7 +82,47 @@ func (bot *Bot) handleFrame(frame *onebot.Frame) {
 		HandleGroupMessage(bot, event)
 		return
 	}
-	// TODO 剩余Event
+	if event := frame.GetGroupUploadNoticeEvent(); event != nil {
+		HandleGroupUploadNotice(bot, event)
+		return
+	}
+	if event := frame.GetGroupAdminNoticeEvent(); event != nil {
+		HandleGroupAdminNotice(bot, event)
+		return
+	}
+	if event := frame.GetGroupDecreaseNoticeEvent(); event != nil {
+		HandleGroupDecreaseNotice(bot, event)
+		return
+	}
+	if event := frame.GetGroupIncreaseNoticeEvent(); event != nil {
+		HandleGroupIncreaseNotice(bot, event)
+		return
+	}
+	if event := frame.GetGroupBanNoticeEvent(); event != nil {
+		HandleGroupBanNotice(bot, event)
+		return
+	}
+	if event := frame.GetFriendAddNoticeEvent(); event != nil {
+		HandleFriendAddNotice(bot, event)
+		return
+	}
+	if event := frame.GetFriendRecallNoticeEvent(); event != nil {
+		HandleFriendRecallNotice(bot, event)
+		return
+	}
+	if event := frame.GetGroupRecallNoticeEvent(); event != nil {
+		HandleGroupRecallNotice(bot, event)
+		return
+	}
+	if event := frame.GetFriendRequestEvent(); event != nil {
+		HandleFriendRequest(bot, event)
+		return
+	}
+	if event := frame.GetGroupRequestEvent(); event != nil {
+		HandleGroupRequest(bot, event)
+		return
+	}
+
 	if frame.FrameType < 300 {
 		log.Errorf("unknown frame type: %+v", frame.FrameType)
 		return
