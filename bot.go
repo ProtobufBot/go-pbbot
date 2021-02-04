@@ -279,4 +279,88 @@ func (bot *Bot) SetGroupWholeBan(groupId int64, enable bool) *onebot.SetGroupWho
 	return resp.GetSetGroupWholeBanResp()
 }
 
+func (bot *Bot) SetGroupCard(groupId int64, userId int64, card string) *onebot.SetGroupCardResp {
+	resp, err := bot.sendFrameAndWait(&onebot.Frame{
+		FrameType: onebot.Frame_TSetGroupCardReq,
+		Data: &onebot.Frame_SetGroupCardReq{
+			SetGroupCardReq: &onebot.SetGroupCardReq{
+				GroupId: groupId,
+				UserId:  userId,
+				Card:    card,
+			},
+		},
+	})
+	if err != nil {
+		return nil
+	}
+	return resp.GetSetGroupCardResp()
+}
+
+func (bot *Bot) SetGroupLeave(groupId int64, isDismiss bool) *onebot.SetGroupLeaveResp {
+	resp, err := bot.sendFrameAndWait(&onebot.Frame{
+		FrameType: onebot.Frame_TSetGroupLeaveReq,
+		Data: &onebot.Frame_SetGroupLeaveReq{
+			SetGroupLeaveReq: &onebot.SetGroupLeaveReq{
+				GroupId:   groupId,
+				IsDismiss: isDismiss,
+			},
+		},
+	})
+	if err != nil {
+		return nil
+	}
+	return resp.GetSetGroupLeaveResp()
+}
+
+func (bot *Bot) SetGroupSpecialTitle(groupId int64, userId int64, specialTitle string, duration int64) *onebot.SetGroupSpecialTitleResp {
+	resp, err := bot.sendFrameAndWait(&onebot.Frame{
+		FrameType: onebot.Frame_TSetGroupSpecialTitleReq,
+		Data: &onebot.Frame_SetGroupSpecialTitleReq{
+			SetGroupSpecialTitleReq: &onebot.SetGroupSpecialTitleReq{
+				GroupId:      groupId,
+				UserId:       userId,
+				SpecialTitle: specialTitle,
+				Duration:     duration,
+			},
+		},
+	})
+	if err != nil {
+		return nil
+	}
+	return resp.GetSetGroupSpecialTitleResp()
+}
+
+func (bot *Bot) SetFriendAddRequest(flag string, approve bool, remark string) *onebot.SetFriendAddRequestResp {
+	resp, err := bot.sendFrameAndWait(&onebot.Frame{
+		FrameType: onebot.Frame_TSetFriendAddRequestReq,
+		Data: &onebot.Frame_SetFriendAddRequestReq{
+			SetFriendAddRequestReq: &onebot.SetFriendAddRequestReq{
+				Flag:    flag,
+				Approve: approve,
+				Remark:  remark,
+			},
+		},
+	})
+	if err != nil {
+		return nil
+	}
+	return resp.GetSetFriendAddRequestResp()
+}
+func (bot *Bot) SetGroupAddRequest(flag string, approve bool, reason string) *onebot.SetGroupAddRequestResp {
+	resp, err := bot.sendFrameAndWait(&onebot.Frame{
+		FrameType: onebot.Frame_TSetGroupAddRequestReq,
+		Data: &onebot.Frame_SetGroupAddRequestReq{
+			SetGroupAddRequestReq: &onebot.SetGroupAddRequestReq{
+				Flag:    flag,
+				Approve: approve,
+				Reason:  reason,
+			},
+		},
+	})
+	if err != nil {
+		return nil
+	}
+	return resp.GetSetGroupAddRequestResp()
+}
+
 // TODO 剩余API
