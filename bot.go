@@ -364,4 +364,105 @@ func (bot *Bot) SetGroupAddRequest(flag string, approve bool, reason string) (*o
 	}
 }
 
-// TODO 剩余API
+func (bot *Bot) GetLoginInfo() (*onebot.GetLoginInfoResp, error) {
+	if resp, err := bot.sendFrameAndWait(&onebot.Frame{
+		FrameType: onebot.Frame_TGetLoginInfoReq,
+		Data: &onebot.Frame_GetLoginInfoReq{
+			GetLoginInfoReq: &onebot.GetLoginInfoReq{},
+		},
+	}); err != nil {
+		return nil, err
+	} else {
+		return resp.GetGetLoginInfoResp(), nil
+	}
+}
+
+func (bot *Bot) GetStrangerInfo(userId int64, noCache bool) (*onebot.GetStrangerInfoResp, error) {
+	if resp, err := bot.sendFrameAndWait(&onebot.Frame{
+		FrameType: onebot.Frame_TGetStrangerInfoReq,
+		Data: &onebot.Frame_GetStrangerInfoReq{
+			GetStrangerInfoReq: &onebot.GetStrangerInfoReq{
+				UserId:  userId,
+				NoCache: noCache,
+			},
+		},
+	}); err != nil {
+		return nil, err
+	} else {
+		return resp.GetGetStrangerInfoResp(), nil
+	}
+}
+
+func (bot *Bot) GetFriendList() (*onebot.GetFriendListResp, error) {
+	if resp, err := bot.sendFrameAndWait(&onebot.Frame{
+		FrameType: onebot.Frame_TGetFriendListReq,
+		Data: &onebot.Frame_GetFriendListReq{
+			GetFriendListReq: &onebot.GetFriendListReq{},
+		},
+	}); err != nil {
+		return nil, err
+	} else {
+		return resp.GetGetFriendListResp(), nil
+	}
+}
+
+func (bot *Bot) GetGroupList() (*onebot.GetGroupListResp, error) {
+	if resp, err := bot.sendFrameAndWait(&onebot.Frame{
+		FrameType: onebot.Frame_TGetGroupListReq,
+		Data: &onebot.Frame_GetGroupListReq{
+			GetGroupListReq: &onebot.GetGroupListReq{},
+		},
+	}); err != nil {
+		return nil, err
+	} else {
+		return resp.GetGetGroupListResp(), nil
+	}
+}
+
+func (bot *Bot) GetGroupInfo(groupId int64, noCache bool) (*onebot.GetGroupInfoResp, error) {
+	if resp, err := bot.sendFrameAndWait(&onebot.Frame{
+		FrameType: onebot.Frame_TGetGroupInfoReq,
+		Data: &onebot.Frame_GetGroupInfoReq{
+			GetGroupInfoReq: &onebot.GetGroupInfoReq{
+				GroupId: groupId,
+				NoCache: noCache,
+			},
+		},
+	}); err != nil {
+		return nil, err
+	} else {
+		return resp.GetGetGroupInfoResp(), nil
+	}
+}
+
+func (bot *Bot) GetGroupMemberInfo(groupId int64, userId int64, noCache bool) (*onebot.GetGroupMemberInfoResp, error) {
+	if resp, err := bot.sendFrameAndWait(&onebot.Frame{
+		FrameType: onebot.Frame_TGetGroupMemberInfoReq,
+		Data: &onebot.Frame_GetGroupMemberInfoReq{
+			GetGroupMemberInfoReq: &onebot.GetGroupMemberInfoReq{
+				GroupId: groupId,
+				UserId:  userId,
+				NoCache: noCache,
+			},
+		},
+	}); err != nil {
+		return nil, err
+	} else {
+		return resp.GetGetGroupMemberInfoResp(), nil
+	}
+}
+
+func (bot *Bot) GetGroupMemberList(groupId int64) (*onebot.GetGroupMemberListResp, error) {
+	if resp, err := bot.sendFrameAndWait(&onebot.Frame{
+		FrameType: onebot.Frame_TGetGroupMemberListReq,
+		Data: &onebot.Frame_GetGroupMemberListReq{
+			GetGroupMemberListReq: &onebot.GetGroupMemberListReq{
+				GroupId: groupId,
+			},
+		},
+	}); err != nil {
+		return nil, err
+	} else {
+		return resp.GetGetGroupMemberListResp(), nil
+	}
+}
