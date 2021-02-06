@@ -50,7 +50,7 @@ func NewSafeWebSocket(conn *websocket.Conn, OnRecvMessage func(messageType int, 
 			}
 			if messageType == websocket.PingMessage {
 				ws.Send(websocket.PongMessage, []byte("pong"))
-				return
+				continue
 			}
 			ws.OnRecvMessage(messageType, data)
 		}
