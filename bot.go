@@ -7,7 +7,6 @@ import (
 	"github.com/ProtobufBot/go-pbbot/proto_gen/onebot"
 	"github.com/ProtobufBot/go-pbbot/util"
 	"github.com/fanliao/go-promise"
-	"github.com/golang/groupcache/lru"
 	"github.com/golang/protobuf/proto"
 	"github.com/gorilla/websocket"
 	log "github.com/sirupsen/logrus"
@@ -18,7 +17,7 @@ var Bots = make(map[int64]*Bot)
 type Bot struct {
 	BotId         int64
 	Session       *SafeWebSocket
-	WaitingFrames *lru.Cache
+	WaitingFrames map[string]*promise.Promise
 }
 
 func NewBot(botId int64, conn *websocket.Conn) *Bot {
@@ -58,15 +57,7 @@ func NewBot(botId int64, conn *websocket.Conn) *Bot {
 	bot := &Bot{
 		BotId:         botId,
 		Session:       safeWs,
-		WaitingFrames: lru.New(128),
-	}
-	bot.WaitingFrames.OnEvicted = func(key lru.Key, value interface{}) {
-		p, ok := value.(*promise.Promise)
-		if !ok {
-			log.Errorf("failed to clean expired waiting frame")
-			return
-		}
-		_ = p.Reject(errors.New("cleaned by lru"))
+		WaitingFrames: make(map[string]*promise.Promise),
 	}
 	Bots[botId] = bot
 	HandleConnect(bot)
@@ -127,14 +118,9 @@ func (bot *Bot) handleFrame(frame *onebot.Frame) {
 		log.Errorf("unknown frame type: %+v", frame.FrameType)
 		return
 	}
-	v, ok := bot.WaitingFrames.Get(frame.Echo)
+	p, ok := bot.WaitingFrames[frame.Echo]
 	if !ok {
 		log.Errorf("failed to find waiting frame")
-		return
-	}
-	p, ok := v.(*promise.Promise)
-	if !ok {
-		log.Errorf("failed to convert waiting frame promise")
 		return
 	}
 	if err := p.Resolve(frame); err != nil {
@@ -153,9 +139,10 @@ func (bot *Bot) sendFrameAndWait(frame *onebot.Frame) (*onebot.Frame, error) {
 	}
 	bot.Session.Send(websocket.BinaryMessage, data)
 	p := promise.NewPromise()
-	bot.WaitingFrames.Add(frame.Echo, p)
-	resp, err := p.Get()
-	if err != nil {
+	bot.WaitingFrames[frame.Echo] = p
+	defer delete(bot.WaitingFrames, frame.Echo)
+	resp, err, timeout := p.GetOrTimeout(120000)
+	if err != nil || timeout {
 		return nil, err
 	}
 	respFrame, ok := resp.(*onebot.Frame)
