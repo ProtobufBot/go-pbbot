@@ -453,3 +453,21 @@ func (bot *Bot) GetGroupMemberList(groupId int64) (*onebot.GetGroupMemberListRes
 		return resp.GetGetGroupMemberListResp(), nil
 	}
 }
+
+func (bot *Bot) SendMsg(groupId, userId int64, msg *Msg, autoEscape bool)(*onebot.SendMsgResp, error){
+	if resp, err := bot.sendFrameAndWait(&onebot.Frame{
+		FrameType: onebot.Frame_TSendMsgReq,
+		Data: &onebot.Frame_SendMsgReq{
+			SendMsgReq: &onebot.SendMsgReq{
+				UserId: userId,
+				GroupId: groupId,
+				Message: msg.MessageList,
+				AutoEscape: autoEscape,
+			},
+		},
+	}); err != nil {
+		return nil, err
+	} else {
+		return resp.GetSendMsgResp(), nil
+	}
+}
