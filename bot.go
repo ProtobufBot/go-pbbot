@@ -17,7 +17,6 @@ var Bots = make(map[int64]*Bot)
 type Bot struct {
 	BotId         int64
 	Session       *SafeWebSocket
-	//WaitingFrames map[string]*promise.Promise
 	WaitingFrames chan *promise.Promise
 }
 
@@ -129,15 +128,6 @@ func (bot *Bot) handleFrame(frame *onebot.Frame) {
 			return
 		}
 	}
-	/*p, ok := bot.WaitingFrames[frame.Echo]
-	if !ok {
-		log.Errorf("failed to find waiting frame")
-		return
-	}
-	if err := p.Resolve(frame); err != nil {
-		log.Errorf("failed to resolve waiting frame promise")
-		return
-	}*/
 }
 
 func (bot *Bot) sendFrameAndWait(frame *onebot.Frame) (*onebot.Frame, error) {
