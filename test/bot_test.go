@@ -21,10 +21,10 @@ func TestBotServer(t *testing.T) {
 	pbbot.HandleGroupMessage = func(bot *pbbot.Bot, event *onebot.GroupMessageEvent) {
 		rawMsg := event.RawMessage
 		groupId := event.GroupId
-		//userId := event.UserId
+		userId := event.UserId
 		messageId := event.MessageId
-		//replyMsg := pbbot.NewMsg().Text("hello world").At(userId).Text("你发送了:" + rawMsg)
-		//_, _ = bot.SendMsg(groupId, userId, replyMsg, false)
+		replyMsg := pbbot.NewMsg().Text("hello world").At(userId).Text("你发送了:" + rawMsg)
+		_, _ = bot.SendGroupMessage(groupId, replyMsg, false)
 		if rawMsg == "撤回" {
 			bot.DeleteMsg(messageId)
 		}
@@ -33,7 +33,7 @@ func TestBotServer(t *testing.T) {
 			bot.SendGroupMessage(groupId, r, false)
 		}
 	}
-	http.HandleFunc("/ws/cq/", func(w http.ResponseWriter, req *http.Request) {
+	http.HandleFunc("/ws/rq/", func(w http.ResponseWriter, req *http.Request) {
 		if err := pbbot.UpgradeWebsocket(w, req); err != nil {
 			fmt.Println("创建机器人失败")
 		}

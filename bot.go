@@ -17,7 +17,8 @@ var Bots = make(map[int64]*Bot)
 type Bot struct {
 	BotId         int64
 	Session       *SafeWebSocket
-	WaitingFrames map[string]*promise.Promise
+	//WaitingFrames map[string]*promise.Promise
+	WaitingFrames chan *promise.Promise
 }
 
 func NewBot(botId int64, conn *websocket.Conn) *Bot {
@@ -57,7 +58,7 @@ func NewBot(botId int64, conn *websocket.Conn) *Bot {
 	bot := &Bot{
 		BotId:         botId,
 		Session:       safeWs,
-		WaitingFrames: make(map[string]*promise.Promise),
+		WaitingFrames: make(chan *promise.Promise, 10),
 	}
 	Bots[botId] = bot
 	HandleConnect(bot)
@@ -118,7 +119,17 @@ func (bot *Bot) handleFrame(frame *onebot.Frame) {
 		log.Errorf("unknown frame type: %+v", frame.FrameType)
 		return
 	}
-	p, ok := bot.WaitingFrames[frame.Echo]
+
+	for v := range bot.WaitingFrames{
+		if v == nil {
+			continue
+		}
+		if err := v.Resolve(frame); err != nil {
+			log.Errorf("failed to resolve waiting frame promise")
+			return
+		}
+	}
+	/*p, ok := bot.WaitingFrames[frame.Echo]
 	if !ok {
 		log.Errorf("failed to find waiting frame")
 		return
@@ -126,7 +137,7 @@ func (bot *Bot) handleFrame(frame *onebot.Frame) {
 	if err := p.Resolve(frame); err != nil {
 		log.Errorf("failed to resolve waiting frame promise")
 		return
-	}
+	}*/
 }
 
 func (bot *Bot) sendFrameAndWait(frame *onebot.Frame) (*onebot.Frame, error) {
@@ -139,16 +150,18 @@ func (bot *Bot) sendFrameAndWait(frame *onebot.Frame) (*onebot.Frame, error) {
 	}
 	bot.Session.Send(websocket.BinaryMessage, data)
 	p := promise.NewPromise()
-	bot.WaitingFrames[frame.Echo] = p
-	defer delete(bot.WaitingFrames, frame.Echo)
+	bot.WaitingFrames <- p
 	resp, err, timeout := p.GetOrTimeout(120000)
+	log.Println(resp)
 	if err != nil || timeout {
 		return nil, err
 	}
 	respFrame, ok := resp.(*onebot.Frame)
+	log.Println(respFrame)
 	if !ok {
 		return nil, errors.New("failed to convert promise result to resp frame")
 	}
+	<- bot.WaitingFrames
 	return respFrame, nil
 }
 
