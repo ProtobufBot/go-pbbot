@@ -3,6 +3,7 @@ package pbbot
 import (
 	"encoding/json"
 	"errors"
+	"sync"
 
 	"github.com/ProtobufBot/go-pbbot/proto_gen/onebot"
 	"github.com/ProtobufBot/go-pbbot/util"
@@ -17,6 +18,7 @@ var Bots = make(map[int64]*Bot)
 type Bot struct {
 	BotId         int64
 	Session       *SafeWebSocket
+	mux           sync.RWMutex
 	WaitingFrames map[string]*promise.Promise
 }
 
@@ -62,6 +64,25 @@ func NewBot(botId int64, conn *websocket.Conn) *Bot {
 	Bots[botId] = bot
 	HandleConnect(bot)
 	return bot
+}
+
+func (bot *Bot) setWaitingFrame(key string, value *promise.Promise) {
+	bot.mux.Lock()
+	defer bot.mux.Unlock()
+	bot.WaitingFrames[key] = value
+}
+
+func (bot *Bot) getWaitingFrame(key string) (*promise.Promise, bool) {
+	bot.mux.RLock()
+	defer bot.mux.RUnlock()
+	value, ok := bot.WaitingFrames[key]
+	return value, ok
+}
+
+func (bot *Bot) delWaitingFrame(key string) {
+	bot.mux.Lock()
+	defer bot.mux.Unlock()
+	delete(bot.WaitingFrames, key)
 }
 
 func (bot *Bot) handleFrame(frame *onebot.Frame) {
@@ -118,7 +139,7 @@ func (bot *Bot) handleFrame(frame *onebot.Frame) {
 		log.Errorf("unknown frame type: %+v", frame.FrameType)
 		return
 	}
-	p, ok := bot.WaitingFrames[frame.Echo]
+	p, ok := bot.getWaitingFrame(frame.Echo)
 	if !ok {
 		log.Errorf("failed to find waiting frame")
 		return
@@ -139,8 +160,8 @@ func (bot *Bot) sendFrameAndWait(frame *onebot.Frame) (*onebot.Frame, error) {
 	}
 	bot.Session.Send(websocket.BinaryMessage, data)
 	p := promise.NewPromise()
-	bot.WaitingFrames[frame.Echo] = p
-	defer delete(bot.WaitingFrames, frame.Echo)
+	bot.setWaitingFrame(frame.Echo, p)
+	defer bot.delWaitingFrame(frame.Echo)
 	resp, err, timeout := p.GetOrTimeout(120000)
 	if err != nil || timeout {
 		return nil, err
