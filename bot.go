@@ -474,3 +474,18 @@ func (bot *Bot) GetGroupMemberList(groupId int64) (*onebot.GetGroupMemberListRes
 		return resp.GetGetGroupMemberListResp(), nil
 	}
 }
+
+func (bot *Bot) SetGroupSignIn(groupId int64) (*onebot.SetGroupSignInResp, error) {
+	if resp, err := bot.sendFrameAndWait(&onebot.Frame{
+		FrameType: onebot.Frame_TSetGroupSignInReq,
+		Data: &onebot.Frame_SetGroupSignInReq{
+			SetGroupSignInReq: &onebot.SetGroupSignInReq{
+				GroupId: groupId,
+			},
+		},
+	}); err != nil {
+		return nil, err
+	} else {
+		return resp.GetSetGroupSignInResp(), nil
+	}
+}
