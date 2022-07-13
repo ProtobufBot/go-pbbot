@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/ProtobufBot/go-pbbot"
-	"github.com/ProtobufBot/go-pbbot/proto_gen/onebot"
+	"github.com/2mf8/go-pbbot"
+	"github.com/2mf8/go-pbbot/proto_gen/onebot"
 )
 
 func TestBotServer(t *testing.T) {

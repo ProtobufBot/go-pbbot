@@ -1,4 +1,4 @@
-module github.com/ProtobufBot/go-pbbot
+module github.com/2mf8/go-pbbot
 
 go 1.16
 

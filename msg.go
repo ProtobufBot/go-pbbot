@@ -3,7 +3,7 @@ package pbbot
 import (
 	"strconv"
 
-	"github.com/ProtobufBot/go-pbbot/proto_gen/onebot"
+	"github.com/2mf8/go-pbbot/proto_gen/onebot"
 )
 
 type Msg struct {

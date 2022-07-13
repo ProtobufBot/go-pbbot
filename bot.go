@@ -5,8 +5,8 @@ import (
 	"errors"
 	"sync"
 
-	"github.com/ProtobufBot/go-pbbot/proto_gen/onebot"
-	"github.com/ProtobufBot/go-pbbot/util"
+	"github.com/2mf8/go-pbbot/proto_gen/onebot"
+	"github.com/2mf8/go-pbbot/util"
 	"github.com/fanliao/go-promise"
 	"github.com/golang/protobuf/proto"
 	"github.com/gorilla/websocket"
